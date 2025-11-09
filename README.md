@@ -13,8 +13,9 @@ The front and back legs alternate in phase, producing a simple walking gait in s
 
 ## Core Components
 
-dog.xml: Defines the robot’s body, legs, joints, and actuators using the MJCF XML format. |
-simulate_dog.py: Loads the model, sets up the simulation, and applies PD control to move the legs in a coordinated pattern. |
+dog.xml: Defines the robot’s body, legs, joints, and actuators using the MJCF XML format.
+
+simulate_dog.py: Loads the model, sets up the simulation, and applies PD control to move the legs in a coordinated pattern.
 
 ## Technical Details
 
