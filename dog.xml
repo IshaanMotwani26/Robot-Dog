@@ -5,7 +5,7 @@
 
   <default>
     <joint damping="2.0" limited="true" armature="0.1"/>
-    <geom type="capsule" rgba="0.8 0.6 0.4 1" condim="3" friction="1.0 0.005 0.0001"/>
+    <geom condim="3" friction="1.0 0.005 0.0001"/>
     <motor ctrllimited="true" ctrlrange="-1 1"/>
   </default>
 
@@ -15,39 +15,69 @@
 
     <body name="torso" pos="0 0 0.35">
       <freejoint/>
-      <geom type="box" size="0.12 0.06 0.03" rgba="0.2 0.4 0.8 1" mass="2.0"/>
+      <geom type="box" size="0.12 0.06 0.03" rgba="0.2 0.4 0.8 1"/>
       <inertial pos="0 0 0" mass="2.0" diaginertia="0.02 0.02 0.01"/>
-
-      <body name="front_left" pos="0.1 0.06 -0.03">
-        <joint name="fl_joint" type="hinge" axis="0 1 0" range="-60 60" damping="2.0"/>
-        <geom fromto="0 0 0 0.02 0 -0.22" size="0.018" rgba="0.6 0.3 0.2 1" mass="0.15"/>
-        <inertial pos="0.01 0 -0.11" mass="0.15" diaginertia="0.001 0.001 0.0001"/>
+      <body name="fl_thigh" pos="0.1 0.06 -0.03">
+        <joint name="fl_hip" type="hinge" axis="0 1 0" range="-45 45" damping="2.0"/>
+        <geom type="capsule" fromto="0 0 0 0 0 -0.1" size="0.018" rgba="0.6 0.3 0.2 1"/>
+        <inertial pos="0 0 -0.05" mass="0.2" diaginertia="0.001 0.001 0.0001"/>
+        <body name="fl_shin" pos="0 0 -0.1">
+          <joint name="fl_knee" type="hinge" axis="0 1 0" range="-90 10" damping="2.0"/>
+          <geom type="capsule" fromto="0 0 0 0 0 -0.1" size="0.015" rgba="0.5 0.25 0.15 1"/>
+          <inertial pos="0 0 -0.05" mass="0.15" diaginertia="0.001 0.001 0.0001"/>
+          <geom type="sphere" pos="0 0 -0.1" size="0.022" rgba="0.3 0.3 0.3 1" friction="1.2 0.005 0.0001"/>
+        </body>
       </body>
 
-      <body name="front_right" pos="0.1 -0.06 -0.03">
-        <joint name="fr_joint" type="hinge" axis="0 1 0" range="-60 60" damping="2.0"/>
-        <geom fromto="0 0 0 0.02 0 -0.22" size="0.018" rgba="0.6 0.3 0.2 1" mass="0.15"/>
-        <inertial pos="0.01 0 -0.11" mass="0.15" diaginertia="0.001 0.001 0.0001"/>
+      <body name="fr_thigh" pos="0.1 -0.06 -0.03">
+        <joint name="fr_hip" type="hinge" axis="0 1 0" range="-45 45" damping="2.0"/>
+        <geom type="capsule" fromto="0 0 0 0 0 -0.1" size="0.018" rgba="0.6 0.3 0.2 1"/>
+        <inertial pos="0 0 -0.05" mass="0.2" diaginertia="0.001 0.001 0.0001"/>
+        
+        <body name="fr_shin" pos="0 0 -0.1">
+          <joint name="fr_knee" type="hinge" axis="0 1 0" range="-90 10" damping="2.0"/>
+          <geom type="capsule" fromto="0 0 0 0 0 -0.1" size="0.015" rgba="0.5 0.25 0.15 1"/>
+          <inertial pos="0 0 -0.05" mass="0.15" diaginertia="0.001 0.001 0.0001"/>
+          <geom type="sphere" pos="0 0 -0.1" size="0.022" rgba="0.3 0.3 0.3 1" friction="1.2 0.005 0.0001"/>
+        </body>
       </body>
 
-      <body name="back_left" pos="-0.1 0.06 -0.03">
-        <joint name="bl_joint" type="hinge" axis="0 1 0" range="-60 60" damping="2.0"/>
-        <geom fromto="0 0 0 -0.02 0 -0.22" size="0.018" rgba="0.6 0.3 0.2 1" mass="0.15"/>
-        <inertial pos="-0.01 0 -0.11" mass="0.15" diaginertia="0.001 0.001 0.0001"/>
+      <body name="bl_thigh" pos="-0.1 0.06 -0.03">
+        <joint name="bl_hip" type="hinge" axis="0 1 0" range="-45 45" damping="2.0"/>
+        <geom type="capsule" fromto="0 0 0 0 0 -0.1" size="0.018" rgba="0.6 0.3 0.2 1"/>
+        <inertial pos="0 0 -0.05" mass="0.2" diaginertia="0.001 0.001 0.0001"/>
+        
+        <body name="bl_shin" pos="0 0 -0.1">
+          <joint name="bl_knee" type="hinge" axis="0 1 0" range="-90 10" damping="2.0"/>
+          <geom type="capsule" fromto="0 0 0 0 0 -0.1" size="0.015" rgba="0.5 0.25 0.15 1"/>
+          <inertial pos="0 0 -0.05" mass="0.15" diaginertia="0.001 0.001 0.0001"/>
+          <geom type="sphere" pos="0 0 -0.1" size="0.022" rgba="0.3 0.3 0.3 1" friction="1.2 0.005 0.0001"/>
+        </body>
       </body>
 
-      <body name="back_right" pos="-0.1 -0.06 -0.03">
-        <joint name="br_joint" type="hinge" axis="0 1 0" range="-60 60" damping="2.0"/>
-        <geom fromto="0 0 0 -0.02 0 -0.22" size="0.018" rgba="0.6 0.3 0.2 1" mass="0.15"/>
-        <inertial pos="-0.01 0 -0.11" mass="0.15" diaginertia="0.001 0.001 0.0001"/>
+      <body name="br_thigh" pos="-0.1 -0.06 -0.03">
+        <joint name="br_hip" type="hinge" axis="0 1 0" range="-45 45" damping="2.0"/>
+        <geom type="capsule" fromto="0 0 0 0 0 -0.1" size="0.018" rgba="0.6 0.3 0.2 1"/>
+        <inertial pos="0 0 -0.05" mass="0.2" diaginertia="0.001 0.001 0.0001"/>
+        
+        <body name="br_shin" pos="0 0 -0.1">
+          <joint name="br_knee" type="hinge" axis="0 1 0" range="-90 10" damping="2.0"/>
+          <geom type="capsule" fromto="0 0 0 0 0 -0.1" size="0.015" rgba="0.5 0.25 0.15 1"/>
+          <inertial pos="0 0 -0.05" mass="0.15" diaginertia="0.001 0.001 0.0001"/>
+          <geom type="sphere" pos="0 0 -0.1" size="0.022" rgba="0.3 0.3 0.3 1" friction="1.2 0.005 0.0001"/>
+        </body>
       </body>
     </body>
   </worldbody>
 
   <actuator>
-    <motor joint="fl_joint" gear="20" ctrllimited="true" ctrlrange="-1 1"/>
-    <motor joint="fr_joint" gear="20" ctrllimited="true" ctrlrange="-1 1"/>
-    <motor joint="bl_joint" gear="20" ctrllimited="true" ctrlrange="-1 1"/>
-    <motor joint="br_joint" gear="20" ctrllimited="true" ctrlrange="-1 1"/>
+    <motor joint="fl_hip" gear="20" ctrllimited="true" ctrlrange="-1 1"/>
+    <motor joint="fl_knee" gear="20" ctrllimited="true" ctrlrange="-1 1"/>
+    <motor joint="fr_hip" gear="20" ctrllimited="true" ctrlrange="-1 1"/>
+    <motor joint="fr_knee" gear="20" ctrllimited="true" ctrlrange="-1 1"/>
+    <motor joint="bl_hip" gear="20" ctrllimited="true" ctrlrange="-1 1"/>
+    <motor joint="bl_knee" gear="20" ctrllimited="true" ctrlrange="-1 1"/>
+    <motor joint="br_hip" gear="20" ctrllimited="true" ctrlrange="-1 1"/>
+    <motor joint="br_knee" gear="20" ctrllimited="true" ctrlrange="-1 1"/>
   </actuator>
 </mujoco>

@@ -6,66 +6,86 @@ import time
 model = mujoco.MjModel.from_xml_path("dog.xml")
 data = mujoco.MjData(model)
 
-Kp = 8.0 
-Kd = 1.5 
+# PD controller
+Kp = 8.0   # Proportional gain
+Kd = 1.5   # Derivative gain
 
-q_des = np.zeros(4)  # 4 joints
-qd_des = np.zeros(4)
+q_des = np.zeros(8)
+qd_des = np.zeros(8)
 
 qpos_offset = model.nq - model.nu
 qvel_offset = model.nv - model.nu
 
-print("=" * 60)
-print("Robot Dog Simulation - MuJoCo")
-print("=" * 60)
+print("=" * 70)
+print("Robot Dog Simulation - MuJoCo (2-Joint Legs)")
+print("=" * 70)
 print(f"Model loaded: dog.xml")
 print(f"Number of position coordinates (nq): {model.nq}")
 print(f"Number of velocity coordinates (nv): {model.nv}")
 print(f"Number of actuators (nu): {model.nu}")
+print(f"Joint structure: 4 legs × 2 joints (hip + knee) = 8 actuators")
 print(f"Maximum torque per joint: 20 Nm")
 print(f"PD Controller gains: Kp={Kp}, Kd={Kd}")
 print(f"Position offset: {qpos_offset}, Velocity offset: {qvel_offset}")
-print("=" * 60)
-print("Starting simulation...")
-print("Controls:")
-print("  - Left click + drag: Rotate view")
-print("  - Right click + drag: Pan view")
-print("  - Scroll: Zoom")
-print("  - Space: Pause/Resume")
-print("  - Close window to exit")
-print("=" * 60)
+print("=" * 70)
+print("Implementing trotting gait with stance/swing phases")
+print("=" * 70)
 print()
 
 with mujoco.viewer.launch_passive(model, data) as viewer:
     start_time = time.time()
     last_print = 0
+    initial_x = data.qpos[0]
     
     while viewer.is_running():
         t = time.time() - start_time
         
-        amplitude = 0.3      
-        frequency = 1.2      
-        offset = 0.15      
+        gait_freq = 1.2      
+        stance_ratio = 0.6   
         
-        phase = 2 * np.pi * frequency * t
+        phase = (t * gait_freq) % 1.0
         
-        q_des[0] = offset + amplitude * np.sin(phase)      # Front Left
-        q_des[3] = -offset + amplitude * np.sin(phase)     # Back Right
+        pair1_in_stance = phase < stance_ratio
+        pair1_phase_norm = (phase / stance_ratio) if pair1_in_stance else ((phase - stance_ratio) / (1 - stance_ratio))
         
-        q_des[1] = offset + amplitude * np.sin(phase + np.pi)  # Front Right
-        q_des[2] = -offset + amplitude * np.sin(phase + np.pi) # Back Left
+        pair2_phase = (phase + 0.5) % 1.0
+        pair2_in_stance = pair2_phase < stance_ratio
+        pair2_phase_norm = (pair2_phase / stance_ratio) if pair2_in_stance else ((pair2_phase - stance_ratio) / (1 - stance_ratio))
         
-        q_actual = data.qpos[qpos_offset:]   # Current joint positions
-        qd_actual = data.qvel[qvel_offset:]  # Current joint velocities
+        def get_leg_angles(phase_norm, in_stance):
+            """Returns (hip_angle, knee_angle) for a leg"""
+            if in_stance:
+                hip = 0.25 - 0.5 * phase_norm     
+                knee = -0.2                        
+            else:
+                hip = -0.25 + 0.5 * phase_norm    
+                knee = -0.5 - 0.4 * np.sin(np.pi * phase_norm)
+            return hip, knee
         
+        fl_hip, fl_knee = get_leg_angles(pair1_phase_norm, pair1_in_stance)
+        q_des[0] = fl_hip
+        q_des[1] = fl_knee
+        fr_hip, fr_knee = get_leg_angles(pair2_phase_norm, pair2_in_stance)
+        q_des[2] = fr_hip
+        q_des[3] = fr_knee
+        
+        bl_hip, bl_knee = get_leg_angles(pair2_phase_norm, pair2_in_stance)
+        q_des[4] = bl_hip
+        q_des[5] = bl_knee
+        br_hip, br_knee = get_leg_angles(pair1_phase_norm, pair1_in_stance)
+        q_des[6] = br_hip
+        q_des[7] = br_knee
+        
+        q_actual = data.qpos[qpos_offset:]
+        qd_actual = data.qvel[qvel_offset:]
         position_error = q_des - q_actual
         velocity_error = qd_des - qd_actual
         tau = Kp * position_error + Kd * velocity_error
-        
+
         tau = np.clip(tau, -1.0, 1.0)
-        
+
         data.ctrl[:] = tau
-        
+
         mujoco.mj_step(model, data)
-        
+
         viewer.sync()
