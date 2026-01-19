@@ -34,4 +34,3 @@ Simulation Loop: Real-time viewer using `mujoco.viewer.launch_passive`
 ## Author
 
 Developed by **Ishaan Motwani**  
-For the **Humanoid Purdue Onboarding Fall 2025**
